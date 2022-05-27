@@ -24,10 +24,10 @@ public class PatientController {
         return this.patientService.findPatientById(id);
     }
 
-    @GetMapping("/patients/doctor/{name}")
+    /*@GetMapping("/patients/doctor/{name}")
     private Flux<PatientDTO> obtenerPacientesPorDoctor(@PathVariable("name") String name){
         return this.patientService.getPatientByDoctor(name);
-    }
+    }*/
 
     //POST
     @PostMapping("/save/patient")
@@ -46,14 +46,19 @@ public class PatientController {
         return this.patientService.blockAttendance(id);
     }
 
+    @PutMapping("/unblock/attention/{id}")
+    private Mono<PatientDTO> desbloquearAtencion(@PathVariable("id") String id){
+        return this.patientService.unblockAttendance(id);
+    }
+
     @PutMapping("/update/assurance/{id}") //?status=...
     private Mono<PatientDTO> actualizarEstadoSeguro(@PathVariable("id") String id, @RequestParam String status){
         return this.patientService.updateAssuranceStatus(id,status);
     }
-    @PutMapping("/update/doctor/{id}") //?name=....
+    /*@PutMapping("/update/doctor/{id}") //?name=....
     private Mono<PatientDTO> actualizarDoctor(String id, @RequestParam String name){
         return this.patientService.updateDoctor(id,name);
-    }
+    }*/
 
     //DELETE
     @DeleteMapping("/delete/patient/{id}")

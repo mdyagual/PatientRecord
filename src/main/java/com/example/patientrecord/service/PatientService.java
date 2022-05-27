@@ -48,15 +48,23 @@ public class PatientService {
         return this.iPatientRepo.deleteAll();
     }
 
-    public Flux<PatientDTO> getPatientByDoctor (String name){
+    /*public Flux<PatientDTO> getPatientByDoctor (String name){
         return this.findAllPatients().filter(patientDTO -> patientDTO.getDoctor().equals(name));
-    }
+    }*/
 
     public Mono<PatientDTO> blockAttendance(String id){
         return this.findPatientById(id).flatMap(patientDTO -> {
             if(patientDTO.getStatusAssurance().equals("INACTIVE") || patientDTO.getStatusAssurance().equals("DOES NOT HAVE"))
-                patientDTO.setStatusAttendance("Blocked");
+                patientDTO.setStatusAttendance("BLOCKED");
                 return this.savePatient(patientDTO);
+        }).switchIfEmpty(Mono.empty());
+    }
+
+    public Mono<PatientDTO> unblockAttendance(String id){
+        return this.findPatientById(id).flatMap(patientDTO -> {
+            if(patientDTO.getStatusAssurance().equals("ACTIVE"))
+                patientDTO.setStatusAttendance("ENABLED");
+            return this.savePatient(patientDTO);
         }).switchIfEmpty(Mono.empty());
     }
 
@@ -68,13 +76,13 @@ public class PatientService {
         }).switchIfEmpty(Mono.empty());
     }
 
-    public  Mono<PatientDTO> updateDoctor(String id, String name){
+    /*public  Mono<PatientDTO> updateDoctor(String id, String name){
         return this.findPatientById(id).flatMap(patientDTO -> {
             if(!patientDTO.getDoctor().equals(name))
                 patientDTO.setDoctor(name);
             return this.savePatient(patientDTO);
         }).switchIfEmpty(Mono.empty());
-    }
+    }*/
 
     //Converters
     public PatientDTO convertEntityToDTO(Patient p){
