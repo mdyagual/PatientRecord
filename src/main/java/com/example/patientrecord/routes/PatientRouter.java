@@ -1,10 +1,7 @@
 package com.example.patientrecord.routes;
 
 import com.example.patientrecord.model.PatientDTO;
-import com.example.patientrecord.usecases.GetAllPatientsUseCase;
-import com.example.patientrecord.usecases.GetPatientByIdUseCase;
-import com.example.patientrecord.usecases.SavePatientUseCase;
-import com.example.patientrecord.usecases.UpdatePatientUseCase;
+import com.example.patientrecord.usecases.*;
 import com.mongodb.internal.connection.Server;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -64,6 +61,7 @@ public class PatientRouter {
     //UPDATE PATIENT
     @Bean
     RouterFunction<ServerResponse> actualizarPacienteRouter(UpdatePatientUseCase updatePatientUseCase){
+
         return route(PUT("/update/{id}").and(accept(MediaType.APPLICATION_JSON)),
                 request -> request.bodyToMono(PatientDTO.class)
                             .flatMap(patientDTO -> updatePatientUseCase.apply(request.pathVariable("id"),patientDTO))
@@ -74,6 +72,25 @@ public class PatientRouter {
                             : ServerResponse.status(HttpStatus.NOT_FOUND)
                             .contentType(MediaType.APPLICATION_JSON)
                             .bodyValue(result)));
+    }
+
+    //BLOCK PATIENT
+    @Bean
+    public RouterFunction<ServerResponse> bloquearAtencionRouter(BlockAttendanceUseCase blockAttendanceUseCase){
+        return route(PUT("/block/attention/{id}"),
+                request -> ServerResponse.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromPublisher(blockAttendanceUseCase.apply(request.pathVariable("id")),String.class))
+        );
+    }
+
+    //DELETE PATIENT BY ID
+    @Bean
+    RouterFunction<ServerResponse> eliminarPacienteRouter(DeletePatientUseCase deletePatientUseCase){
+        return route(DELETE("/delete/patient/{id}").and(accept(MediaType.APPLICATION_JSON)),
+                request -> ServerResponse.status(HttpStatus.NO_CONTENT)
+        .body(BodyInserters.fromPublisher(deletePatientUseCase.apply(request.pathVariable("id")),Void.class)));
+
     }
 
 }
