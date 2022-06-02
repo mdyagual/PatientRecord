@@ -1,7 +1,7 @@
 package com.example.patientrecord;
 
 import com.example.patientrecord.model.PatientDTO;
-import com.example.patientrecord.service.PatientService;
+//import com.example.patientrecord.service.PatientService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +10,7 @@ import reactor.test.StepVerifier;
 
 @SpringBootTest
 public class PatientServiceTest {
+    /*
     //Preguntar aclaración sobre mock
     @Autowired
     private PatientService patientService;
@@ -29,7 +30,7 @@ public class PatientServiceTest {
         
 
     }
-
+*/
 
 
 
