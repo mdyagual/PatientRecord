@@ -4,6 +4,8 @@ import com.example.patientrecord.model.PatientDTO;
 import com.example.patientrecord.usecases.GetAllPatientsUseCase;
 import com.example.patientrecord.usecases.GetPatientByIdUseCase;
 import com.example.patientrecord.usecases.SavePatientUseCase;
+import com.example.patientrecord.usecases.UpdatePatientUseCase;
+import com.mongodb.internal.connection.Server;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -51,10 +53,27 @@ public class PatientRouter {
     }
 
     //GET PATIENT BY ID
-    @Bean RouterFunction<ServerResponse> obtenerPacientePorIdRouter(GetPatientByIdUseCase getPatientByIdUseCase){
+    @Bean
+    RouterFunction<ServerResponse> obtenerPacientePorIdRouter(GetPatientByIdUseCase getPatientByIdUseCase){
         return route(GET("/patient/{id}"),
                 request -> ServerResponse.ok()
         .contentType(MediaType.APPLICATION_JSON)
         .body(BodyInserters.fromPublisher(getPatientByIdUseCase.apply(request.pathVariable("id")),PatientDTO.class)));
     }
+
+    //UPDATE PATIENT
+    @Bean
+    RouterFunction<ServerResponse> actualizarPacienteRouter(UpdatePatientUseCase updatePatientUseCase){
+        return route(PUT("/update/{id}").and(accept(MediaType.APPLICATION_JSON)),
+                request -> request.bodyToMono(PatientDTO.class)
+                            .flatMap(patientDTO -> updatePatientUseCase.apply(request.pathVariable("id"),patientDTO))
+                            .flatMap(result -> result.getName()!=null
+                            ? ServerResponse.status(HttpStatus.CREATED)
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .bodyValue(result)
+                            : ServerResponse.status(HttpStatus.NOT_FOUND)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .bodyValue(result)));
+    }
+
 }
