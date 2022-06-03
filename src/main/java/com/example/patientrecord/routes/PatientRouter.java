@@ -33,10 +33,12 @@ public class PatientRouter {
         );*/
 
         //2
+        //Function<Lo que recibe, lo que va a devolver>
         Function<PatientDTO, Mono<ServerResponse>> executeGuardar = patientDTO -> savePatientUseCase.apply(patientDTO)
                 .flatMap(result -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(result));
 
-        return route(POST("/save/patient").and(accept(MediaType.APPLICATION_JSON)), request -> request.bodyToMono(PatientDTO.class).flatMap(executeGuardar));
+        return route(POST("/save/patient")
+                .and(accept(MediaType.APPLICATION_JSON)), request -> request.bodyToMono(PatientDTO.class).flatMap(executeGuardar));
 
 
 
