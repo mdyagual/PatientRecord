@@ -18,10 +18,14 @@ public class GetPatientByIdUseCase implements Function<String, Mono<PatientDTO>>
 
     @Override
     public Mono<PatientDTO> apply (String id){
-        return patientRepository.findById(id)
+        return patientRepository.findById(id).onErrorResume(e -> {
+                System.out.println(e.getStackTrace());
+                return Mono.empty();
+                })
                 .switchIfEmpty(Mono.error(()->new NoSuchElementException()))
                 .map(patient -> patientMapper.convertEntityToDTO().apply(patient));
     }
+    //Esperame que se volvio loco mi mouse
 
 
 }
