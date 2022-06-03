@@ -12,6 +12,7 @@ import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
+import java.util.NoSuchElementException;
 import java.util.function.Function;
 
 import static org.springframework.web.reactive.function.server.RequestPredicates.*;
@@ -55,9 +56,19 @@ public class PatientRouter {
     @Bean
     RouterFunction<ServerResponse> obtenerPacientePorIdRouter(GetPatientByIdUseCase getPatientByIdUseCase){
         return route(GET("/patient/{id}"),
-                request -> ServerResponse.ok()
-        .contentType(MediaType.APPLICATION_JSON)
-        .body(BodyInserters.fromPublisher(getPatientByIdUseCase.apply(request.pathVariable("id")),PatientDTO.class)));
+                request -> {
+                    return getPatientByIdUseCase.apply(request.pathVariable("id"))
+                            .onErrorResume(t -> Mono.empty()) //Capture the error and return the Mono.empty() bc we are expecting later the use of flatMap
+                            .flatMap(patientDTO -> ServerResponse.ok() //If error does not happend will execute
+                            .contentType(MediaType.APPLICATION_JSON) //etc
+                            .bodyValue(patientDTO)) //etc
+                            //When the error happends we return an empty and then return the status that we wanted
+                            //.switchIfEmpty(ServerResponse.status(HttpStatus.NOT_FOUND).build());
+                            .then(ServerResponse.status(HttpStatus.NOT_FOUND).build()); //Not properly use in this case bc we are expecting to do smth: call a function e.g
+
+                });
+                //.onErrorResume(throwable -> ServerResponse.status(HttpStatus.NOT_FOUND).build()));
+        //.onErrorReturn(Mono.just(ServerResponse.status(HttpStatus.NO_CONTENT))));
     }
 
     //UPDATE PATIENT

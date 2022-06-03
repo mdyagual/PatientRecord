@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+import java.util.NoSuchElementException;
 import java.util.function.Function;
 
 @Service
@@ -18,6 +19,7 @@ public class GetPatientByIdUseCase implements Function<String, Mono<PatientDTO>>
     @Override
     public Mono<PatientDTO> apply (String id){
         return patientRepository.findById(id)
+                .switchIfEmpty(Mono.error(()->new NoSuchElementException()))
                 .map(patient -> patientMapper.convertEntityToDTO().apply(patient));
     }
 
