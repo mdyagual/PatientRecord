@@ -63,8 +63,8 @@ public class PatientRouter {
                             .contentType(MediaType.APPLICATION_JSON) //etc
                             .bodyValue(patientDTO)) //etc
                             //When the error happends we return an empty and then return the status that we wanted
-                            //.switchIfEmpty(ServerResponse.status(HttpStatus.NOT_FOUND).build());
-                            .then(ServerResponse.status(HttpStatus.NOT_FOUND).build()); //Not properly use in this case bc we are expecting to do smth: call a function e.g
+                            .switchIfEmpty(ServerResponse.status(HttpStatus.NOT_FOUND).build());
+                            //.then(ServerResponse.status(HttpStatus.NOT_FOUND).build()); //Not properly use in this case bc we are expecting to do smth: call a function e.g
 
                 });
                 //.onErrorResume(throwable -> ServerResponse.status(HttpStatus.NOT_FOUND).build()));
