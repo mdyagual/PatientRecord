@@ -53,27 +53,6 @@ public class PatientServiceTest {
                 .create(Mono.just(Mockito.when(getPatientByIdUseCase.apply("2"))
                         .thenThrow(NoSuchElementException.class)).onErrorStop()).thenCancel().verify();
     }
-    /*
-    //Preguntar aclaración sobre mock
-    @Autowired
-    private PatientService patientService;
-
-    @Test
-    @DisplayName("savePatient")
-    void savePatient (){
-        PatientDTO patientDTO = new PatientDTO("1","ASDFG-123","Mary Rojas",24,"ACTIVE","ENABLED");
-        StepVerifier.create(patientService.savePatient(patientDTO)).expectComplete();
-
-    }
-
-    @Test
-    @DisplayName("patientById")
-    void patientById (){
-        PatientDTO patientDTO = new PatientDTO("1","ASDFG-123","Mary Rojas",24,"ACTIVE","ENABLED");
-        
-
-    }
-*/
 
 
 
